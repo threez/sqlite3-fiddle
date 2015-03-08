@@ -5,6 +5,7 @@ require 'sqlite3/statement'
 require 'sqlite3/pragmas'
 require 'sqlite3/value'
 require 'sqlite3/database'
+require 'sqlite3/backup'
 
 module SQLite3
   VERSION = '1.3.9'

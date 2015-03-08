@@ -9,6 +9,11 @@ module SQLite3
   SQLITE_NULL = 5
 
   module Constants
+    module ErrorCode
+      OK = SQLITE_OK
+      DONE = SQLITE_DONE
+    end
+
     module TextRep
       UTF8    = 1
       UTF16LE = 2

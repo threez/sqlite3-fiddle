@@ -74,6 +74,11 @@ module SQLite3
     extern 'int sqlite3_busy_handler(sqlite3*, void*, void*)'
     extern 'int sqlite3_create_collation(sqlite3*,const char *,int,void *,void*)'
     extern 'const char *sqlite3_errmsg(sqlite3*)'
+    extern 'sqlite3_backup *sqlite3_backup_init(sqlite3 *, const char *, sqlite3 *, const char *)'
+		extern 'int sqlite3_backup_step(sqlite3_backup *, int)'
+		extern 'int sqlite3_backup_finish(sqlite3_backup *)'
+		extern 'int sqlite3_backup_remaining(sqlite3_backup *)'
+		extern 'int sqlite3_backup_pagecount(sqlite3_backup *)'
 
     def self.set_context_result(ctx, var)
       case var
