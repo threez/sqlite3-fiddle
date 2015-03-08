@@ -13,3 +13,4 @@ ports
 InstalledFiles
 Makefile
 Gemfile.lock
+.DS_Store
