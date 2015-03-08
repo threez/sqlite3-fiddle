@@ -1,19 +1,18 @@
-
 require 'fiddle'
 require 'fiddle/import'
 
 module SQLite3
   module Driver
     extend Fiddle::Importer
-   
+
     if path = $LIBSQLITE3 || ENV['LIBSQLITE3']
       dlload path
     else
       dlload 'libsqlite3.dylib' rescue begin
-      	dlload 'libsqlite3.so' rescue begin
-		      dlload 'libsqlite3.dll' rescue fail('Unable to find libsqlite3, set ' +
-						'the global $LIBSQLITE3 or the environment variable LIBSQLITE3')
-				end
+        dlload 'libsqlite3.so' rescue begin
+          dlload 'libsqlite3.dll' rescue fail('Unable to find libsqlite3, set ' +
+            'the global $LIBSQLITE3 or the environment variable LIBSQLITE3')
+        end
       end
     end
 
@@ -85,10 +84,10 @@ module SQLite3
     extern 'int sqlite3_create_collation(sqlite3*,const char *,int,void *,void*)'
     extern 'const char *sqlite3_errmsg(sqlite3*)'
     extern 'sqlite3_backup *sqlite3_backup_init(sqlite3 *, const char *, sqlite3 *, const char *)'
-		extern 'int sqlite3_backup_step(sqlite3_backup *, int)'
-		extern 'int sqlite3_backup_finish(sqlite3_backup *)'
-		extern 'int sqlite3_backup_remaining(sqlite3_backup *)'
-		extern 'int sqlite3_backup_pagecount(sqlite3_backup *)'
+    extern 'int sqlite3_backup_step(sqlite3_backup *, int)'
+    extern 'int sqlite3_backup_finish(sqlite3_backup *)'
+    extern 'int sqlite3_backup_remaining(sqlite3_backup *)'
+    extern 'int sqlite3_backup_pagecount(sqlite3_backup *)'
 
     def self.set_context_result(ctx, var)
       case var
@@ -99,7 +98,6 @@ module SQLite3
            var.encoding == Encoding::UTF_16BE
           Driver.sqlite3_result_text16(ctx, var, -1, nil)
         else
-
           Driver.sqlite3_result_text(ctx, var.encode(Encoding::UTF_8), -1, nil)
         end
       when Fixnum, Bignum
