@@ -5,7 +5,17 @@ require 'fiddle/import'
 module SQLite3
   module Driver
     extend Fiddle::Importer
-    dlload '/usr/local/Cellar/sqlite/3.8.8.3/lib/libsqlite3.dylib' #'/usr/lib/libsqlite3.so'
+   
+    if path = $LIBSQLITE3 || ENV['LIBSQLITE3']
+      dlload path
+    else
+      dlload 'libsqlite3.dylib' rescue begin
+      	dlload 'libsqlite3.so' rescue begin
+		      dlload 'libsqlite3.dll' rescue fail('Unable to find libsqlite3, set ' +
+						'the global $LIBSQLITE3 or the environment variable LIBSQLITE3')
+				end
+      end
+    end
 
     extern 'const char *sqlite3_libversion()'
     extern 'int sqlite3_busy_timeout(void*, int)'
@@ -23,11 +33,11 @@ module SQLite3
     extern 'int sqlite3_clear_bindings(void*)'
     extern 'int sqlite3_bind_parameter_count(void*)'
     extern 'int sqlite3_column_count(void*)'
-    extern 'const char *sqlite3_column_name(void*, int)'
+    extern 'const char *sqlite3_column_name(void*, int)' rescue nil
     extern 'const char *sqlite3_column_decltype(void*, int)'
-    extern 'const char *sqlite3_column_database_name(void*,int)'
-    extern 'const char *sqlite3_column_table_name(void*,int)'
-    extern 'const char *sqlite3_column_origin_name(void*,int)'
+    extern 'const char *sqlite3_column_database_name(void*,int)' rescue nil
+    extern 'const char *sqlite3_column_table_name(void*,int)' rescue nil
+    extern 'const char *sqlite3_column_origin_name(void*,int)' rescue nil
     extern 'int sqlite3_column_type(void*, int)'
     extern 'const void *sqlite3_column_blob(void*, int)'
     extern 'int sqlite3_column_bytes(void*, int)'
