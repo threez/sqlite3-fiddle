@@ -1,4 +1,4 @@
-# Sqlite3 Fiddle
+# Sqlite3 Fiddle [![Build Status](https://travis-ci.org/threez/sqlite3-fiddle.svg)](https://travis-ci.org/threez/sqlite3-fiddle)
 
 This is a fork of the original sqlite3-ruby gem. It replaces the original C extension with a fiddle based replacement.
 
