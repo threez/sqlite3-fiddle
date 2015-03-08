@@ -1,4 +1,4 @@
-require 'sqlite3/errors'
+require 'sqlite3/constants'
 
 module SQLite3
 
@@ -164,7 +164,7 @@ module SQLite3
     def default_temp_store=( mode )
       set_enum_pragma "default_temp_store", mode, TEMP_STORE_MODES
     end
-  
+
     def temp_store
       get_enum_pragma "temp_store"
     end
@@ -180,7 +180,7 @@ module SQLite3
     def full_column_names=( mode )
       set_boolean_pragma "full_column_names", mode
     end
-  
+
     def parser_trace
       get_boolean_pragma "parser_trace"
     end
@@ -188,7 +188,7 @@ module SQLite3
     def parser_trace=( mode )
       set_boolean_pragma "parser_trace", mode
     end
-  
+
     def vdbe_trace
       get_boolean_pragma "vdbe_trace"
     end

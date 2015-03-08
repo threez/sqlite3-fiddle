@@ -1,10 +1,15 @@
-# support multiple ruby version (fat binaries under windows)
-begin
-  RUBY_VERSION =~ /(\d+\.\d+)/
-  require "sqlite3/#{$1}/sqlite3_native"
-rescue LoadError
-  require 'sqlite3/sqlite3_native'
-end
-
+require 'sqlite3/constants'
+require 'sqlite3/driver'
+require 'sqlite3/resultset'
+require 'sqlite3/statement'
+require 'sqlite3/pragmas'
+require 'sqlite3/value'
 require 'sqlite3/database'
-require 'sqlite3/version'
+
+module SQLite3
+  VERSION = '1.3.9'
+
+  def self.libversion
+    Driver.sqlite3_libversion().to_s
+  end
+end

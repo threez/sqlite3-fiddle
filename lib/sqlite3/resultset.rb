@@ -1,6 +1,3 @@
-require 'sqlite3/constants'
-require 'sqlite3/errors'
-
 module SQLite3
 
   # The ResultSet object encapsulates the enumerability of a query's output.
@@ -19,20 +16,10 @@ module SQLite3
       attr_writer :fields
 
       def types
-        warn(<<-eowarn) if $VERBOSE
-#{caller[0]} is calling #{self.class}#types.  This method will be removed in
-sqlite3 version 2.0.0, please call the `types` method on the SQLite3::ResultSet
-object that created this object
-        eowarn
         @types
       end
 
       def fields
-        warn(<<-eowarn) if $VERBOSE
-#{caller[0]} is calling #{self.class}#fields.  This method will be removed in
-sqlite3 version 2.0.0, please call the `columns` method on the SQLite3::ResultSet
-object that created this object
-        eowarn
         @fields
       end
     end
@@ -44,20 +31,10 @@ object that created this object
       attr_writer :fields
 
       def types
-        warn(<<-eowarn) if $VERBOSE
-#{caller[0]} is calling #{self.class}#types.  This method will be removed in
-sqlite3 version 2.0.0, please call the `types` method on the SQLite3::ResultSet
-object that created this object
-        eowarn
         @types
       end
 
       def fields
-        warn(<<-eowarn) if $VERBOSE
-#{caller[0]} is calling #{self.class}#fields.  This method will be removed in
-sqlite3 version 2.0.0, please call the `columns` method on the SQLite3::ResultSet
-object that created this object
-        eowarn
         @fields
       end
 
@@ -77,6 +54,7 @@ object that created this object
     # Reset the cursor, so that a result set which has reached end-of-file
     # can be rewound and reiterated.
     def reset( *bind_params )
+      must_be_open!
       @stmt.reset!
       @stmt.bind_params( *bind_params )
       @eof = false
@@ -101,31 +79,14 @@ object that created this object
     # For hashes, the column names are the keys of the hash, and the column
     # types are accessible via the +types+ property.
     def next
+      must_be_open!
       if @db.results_as_hash
         return next_hash
       end
 
       row = @stmt.step
       return nil if @stmt.done?
-
-      if @db.type_translation
-        row = @stmt.types.zip(row).map do |type, value|
-          @db.translator.translate( type, value )
-        end
-      end
-
-      if row.respond_to?(:fields)
-        # FIXME: this can only happen if the translator returns something
-        # that responds to `fields`.  Since we're removing the translator
-        # in 2.0, we can remove this branch in 2.0.
-        row = ArrayWithTypes.new(row)
-      else
-        # FIXME: the `fields` and `types` methods are deprecated on this
-        # object for version 2.0, so we can safely remove this branch
-        # as well.
-        row = ArrayWithTypesAndFields.new(row)
-      end
-
+      row = ArrayWithTypesAndFields.new(row)
       row.fields = @stmt.columns
       row.types = @stmt.types
       row
@@ -134,6 +95,7 @@ object that created this object
     # Required by the Enumerable mixin. Provides an internal iterator over the
     # rows of the result set.
     def each
+      must_be_open!
       while node = self.next
         yield node
       end
@@ -161,26 +123,21 @@ object that created this object
 
     # Returns the types of the columns returned by this result set.
     def types
+      must_be_open!
       @stmt.types
     end
 
     # Returns the names of the columns returned by this result set.
     def columns
+      must_be_open!
       @stmt.columns
     end
 
     # Return the next row as a hash
     def next_hash
+      must_be_open!
       row = @stmt.step
       return nil if @stmt.done?
-
-      # FIXME: type translation is deprecated, so this can be removed
-      # in 2.0
-      if @db.type_translation
-        row = @stmt.types.zip(row).map do |type, value|
-          @db.translator.translate( type, value )
-        end
-      end
 
       # FIXME: this can be switched to a regular hash in 2.0
       row = HashWithTypesAndFields[*@stmt.columns.zip(row).flatten]
@@ -190,6 +147,12 @@ object that created this object
       row.fields = @stmt.columns
       row.types = @stmt.types
       row
+    end
+
+    private
+
+    def must_be_open!
+      raise Exception, "#{self.class} is closed!" if closed?
     end
   end
 end
