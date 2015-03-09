@@ -20,7 +20,6 @@ module SQLite3
     extern 'int sqlite3_busy_timeout(void*, int)'
     extern 'int sqlite3_open_v2(const char *, sqlite3 **, int, const char *)'
     extern 'int sqlite3_open16(const void *,sqlite3 **)'
-    extern 'const char *sqlite3_errstr(int)'
     extern 'int sqlite3_close(sqlite3*)'
     extern 'int sqlite3_changes(void*)'
     extern 'int sqlite3_total_changes(sqlite3*)'
